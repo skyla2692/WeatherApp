@@ -9,6 +9,9 @@ export default function App() {
   const [ok, setOk]= useState(true);
   const ask = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
+    
+    console.log(granted);
+
     if(!granted){
       setOk(false);
     }
