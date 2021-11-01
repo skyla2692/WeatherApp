@@ -6,6 +6,7 @@ import { Fontisto } from '@expo/vector-icons';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const API_KEY = "c01eb371fe0059414ff56f2768963b7c";
 
+
 const icons = {
   "Clouds" : "cloudy",
   "Rain" : "rains",
@@ -16,10 +17,24 @@ const icons = {
   "Atmosphere" : "cloudy-gusts",
 };
 
+const dateToDay = {
+  "0" : "Sun",
+  "1" : "Mon",
+  "2" : "Tue",
+  "3" : "Wed",
+  "4" : "Thu",
+  "5" : "Fri",
+  "6" : "Sat",
+};
+
 export default function App() {
   const [city, setCity] = useState("Loading...");
   const [days, setDays] = useState([]);
   const [ok, setOk]= useState(true);
+  const [date, setDate] = useState([]);
+  const [dayOfWeek, setDayOfWeek] = useState([]);
+  const dtArr = [];
+  const dow = [];
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -36,9 +51,18 @@ export default function App() {
     const json = await response.json();
 
     setDays(json.daily);
-  };
 
-  const date = new Date();
+    var date = new Date();
+    
+    for(var i = 0; i < 8; i++){
+      dtArr[i] = date.getMonth()+1 + '/' + date.getDate();
+      dow[i] = date.getDay();
+      date.setDate(date.getDate() + 1)
+    };
+    setDate(dtArr);
+    setDayOfWeek(dow);
+
+  };
 
   useEffect(() => {
     getWeather();
@@ -66,7 +90,10 @@ export default function App() {
           ) : (
             days.map((day, index) => 
               <View key={index} style={styles.day}>
-                <Text style={styles.date}>{date.getMonth()+1} / {date.getDate()}</Text>
+                <View style={styles.dateBox}>
+                  <Text style={styles.date}>{date[index]}</Text>
+                  <Text style={styles.days}>{dateToDay[dayOfWeek[index]]}</Text>
+                </View>
                 <View style={styles.iconBox}>
                   <View style={styles.tempBox}>
                     <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
@@ -117,11 +144,23 @@ const styles = StyleSheet.create({
     //backgroundColor: 'yellow',
   },
 
+  dateBox: {
+    width: "45%",
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+    marginTop: 5,
+    //backgroundColor: 'skyblue',
+  },
   date: {
     fontSize: 30,
     fontWeight: "500",
-    marginTop: 5,
     //backgroundColor: 'white',
+  },
+  days: {
+    fontSize: 30,
+    fontWeight: "500", 
+    //backgroundColor: 'grey',
   },
 
   iconBox: {
