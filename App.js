@@ -6,7 +6,6 @@ import { Fontisto } from '@expo/vector-icons';
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const API_KEY = "c01eb371fe0059414ff56f2768963b7c";
 
-
 const icons = {
   "Clouds" : "cloudy",
   "Rain" : "rains",
@@ -61,7 +60,6 @@ export default function App() {
     };
     setDate(dtArr);
     setDayOfWeek(dow);
-
   };
 
   useEffect(() => {
