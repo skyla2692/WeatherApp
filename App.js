@@ -16,24 +16,11 @@ const icons = {
   "Atmosphere" : "cloudy-gusts",
 };
 
-const dateToDay = {
-  "0" : "Sun",
-  "1" : "Mon",
-  "2" : "Tue",
-  "3" : "Wed",
-  "4" : "Thu",
-  "5" : "Fri",
-  "6" : "Sat",
-};
-
 export default function App() {
   const [city, setCity] = useState("Loading...");
   const [days, setDays] = useState([]);
   const [ok, setOk]= useState(true);
-  const [date, setDate] = useState([]);
-  const [dayOfWeek, setDayOfWeek] = useState([]);
-  const dtArr = [];
-  const dow = [];
+  const [currents, setCurrents] = useState([]);
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -44,22 +31,12 @@ export default function App() {
 
     const { coords : { latitude, longitude }} = await Location.getCurrentPositionAsync({ accuracy: 5 });
     const location = await Location.reverseGeocodeAsync({latitude, longitude}, {useGoogleMaps: false});
-
     setCity(location[0].city);
+
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`);
     const json = await response.json();
-
     setDays(json.daily);
-
-    var date = new Date();
-    
-    for(var i = 0; i < 8; i++){
-      dtArr[i] = date.getMonth()+1 + '/' + date.getDate();
-      dow[i] = date.getDay();
-      date.setDate(date.getDate() + 1)
-    };
-    setDate(dtArr);
-    setDayOfWeek(dow);
+    setCurrents(json.current);
   };
 
   useEffect(() => {
@@ -71,36 +48,36 @@ export default function App() {
       <View style={styles.city}>
         <Text style={styles.cityName}>{city}</Text>
       </View>
-
+    
       <ScrollView 
         pagingEnabled   /* makes the pages to the scrolls (not allowing pages to be freely scrolled) */
-        horizontal    /* makes the pages to go horizontal instead of vertical */
         showsHorizontalScrollIndicator={true}   /* if false -> makes the scrolling bar in the bottom disappear */
         indicatorStyle="white"    /* change the color of your scoll bar + only works in IOS */
         contentContainerStyle={styles.weather}  /* way to apply style under ScrollView Tag */
         >
+        <View style={styles.currentStatus}>
+          <View style={styles.currentIcon}>
+            <Text style={styles.currentTemp}>{parseFloat(currents.temp).toFixed(1)}°C</Text>
+            <View style={styles.currentDescBox}>
+              {/* <Fontisto name={icons[currents.weather[0].main]} size={70} color="black"/> */}
+              {/* <Text style={styles.currentDescription}>{currents.weather[0].main}</Text> */}
+            </View>
+          </View>
+        </View>
+
         {days.length === 0 ? (
-          <View style={{ ...styles.day, alignItems: "center" }}>
-              <ActivityIndicator 
-                color="white" 
-                size="large" />
+          <View style={{ ...styles.loading, alignItems: "center" }}>
+            <ActivityIndicator 
+              color="white" 
+              size="large" />
           </View>
           ) : (
             days.map((day, index) => 
-              <View key={index} style={styles.day}>
-                <View style={styles.dateBox}>
-                  <Text style={styles.date}>{date[index]}</Text>
-                  <Text style={styles.days}>{dateToDay[dayOfWeek[index]]}</Text>
-                </View>
-                <View style={styles.iconBox}>
-                  <View style={styles.tempBox}>
-                    <Text style={styles.temp}>{parseFloat(day.temp.day).toFixed(1)}</Text>
-                    <Text style={styles.symbol}>°C</Text>
-                  </View>
-                  <Fontisto name={icons[day.weather[0].main]} size={68} color="black" style={{marginRight: 20}}/>
-                </View>
-                <Text style={styles.description}>{day.weather[0].main}</Text>
-                <Text style={styles.textDescription}>{day.weather[0].description}</Text>
+              <View style={styles.weekBox}>
+                <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(0, 10)}</Text>
+                <Fontisto name={icons[day.weather[0].main]} size={24} color="black"/>
+                <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(1)}°C</Text>
+                <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(1)}°C</Text>
               </View>
             )
           )}
@@ -116,86 +93,77 @@ const styles = StyleSheet.create({
   },
 
   city: {
-    flex: 1.5,
-    marginTop: 70,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    //backgroundColor: 'blue',
+    marginTop: 30,
+    backgroundColor: 'blue',
   },
   cityName: {
-    fontSize: 50,
-    fontWeight: "700",
+    fontSize: 30,
+    fontWeight: "500",
   },
+
+  currentStatus: {
+    flex: 4,
+    marginVertical: 5,
+    backgroundColor: 'gold',
+  },
+  currentIcon: {
+    width: SCREEN_WIDTH,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  currentTemp: {
+    fontSize: 70,
+    fontWeight: "600",
+    //backgroundColor: 'yellow',
+  },
+  currentDescBox: {
+    alignItems: 'center',
+  },
+  currentDescription: {
+    fontSize: 20,
+    fontWeight: "400",
+    marginTop: -15,
+  },
+
 
   weather: {
     alignItems: "center",
-    justifyContent: "space-around",
+    marginVertical: 10,
+    marginHorizontal: 5,
     //backgroundColor: 'red',
   },
 
-  day: {
+  loading: {
     width: SCREEN_WIDTH,
     alignItems: "flex-start",
     paddingHorizontal: 15,
-    marginTop: -40,
-    marginBottom: 100,
     //backgroundColor: 'yellow',
   },
 
-  dateBox: {
-    width: "45%",
-    flexDirection: "row",
-    alignItems: "flex-start",
+  weekBox: {
+    width: SCREEN_WIDTH,
+    alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 5,
-    //backgroundColor: 'skyblue',
+    flexDirection: "row",
+    marginVertical: 5,
+    //backgroundColor: "lightgreen",
   },
   date: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "500",
     //backgroundColor: 'white',
   },
   days: {
-    fontSize: 30,
-    fontWeight: "500", 
+    fontSize: 24,
+    fontWeight: "500",
     //backgroundColor: 'grey',
   },
-
-  iconBox: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "flex-start",
-    justifyContent: "space-between",
-    marginTop: -10,
-    //backgroundColor: "lightgreen"
-  },
-  tempBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginVertical: 50,
-    //backgroundColor: 'teal',
-  },
   temp: {
-    fontSize: 90,
-    fontWeight: "600",
-  },
-  symbol: {
-    fontSize: 75,
-    paddingLeft: 10,
+    fontSize: 24,
     fontWeight: "500",
   },
-
-  description: {
-    fontSize: 30,
-    fontWeight: "600",
-    marginTop: -10,
-    marginBottom: 10,
-    //backgroundColor: 'tomato',
-  },
-  textDescription: {
-    fontSize: 20,
-    fontWeight: "500",
-    marginVertical: 10,
-    //backgroundColor: 'orange',
-  }
 })
