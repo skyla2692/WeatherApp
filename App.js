@@ -59,8 +59,8 @@ export default function App() {
           <View style={styles.currentIcon}>
             <Text style={styles.currentTemp}>{parseFloat(currents.temp).toFixed(1)}°C</Text>
             <View style={styles.currentDescBox}>
-              {/* <Fontisto name={icons[currents.weather[0].main]} size={70} color="black"/> */}
-              {/* <Text style={styles.currentDescription}>{currents.weather[0].main}</Text> */}
+              <Fontisto name={icons[currents.weather[0].main]} size={70} color="black" style={{marginTop: 10}}/>
+              <Text style={styles.currentDescription}>{currents.weather[0].main}</Text>
             </View>
           </View>
         </View>
@@ -72,13 +72,13 @@ export default function App() {
               size="large" />
           </View>
           ) : (
-            days.map((day, index) => 
-              <View style={styles.weekBox}>
-                <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
-                <Fontisto name={icons[day.weather[0].main]} size={24} color="black"/>
-                <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(1)}°C</Text>
-                <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(1)}°C</Text>
-              </View>
+          days.map((day, index) => 
+            <View style={styles.weekBox}>
+              <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
+              <Fontisto name={icons[day.weather[0].main]} size={25} color="black"/>
+              <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(1)}°C</Text>
+              <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(1)}°C</Text>
+            </View>
             )
           )}
       </ScrollView>
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
   },
 
   city: {
-    flex: 1,
+    flex: 0.5,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 30,
@@ -101,22 +101,22 @@ const styles = StyleSheet.create({
   },
   cityName: {
     fontSize: 30,
-    fontWeight: "500",
+    fontWeight: "600",
   },
 
   currentStatus: {
-    flex: 4,
+    height: "60%",
     marginVertical: 5,
     //backgroundColor: 'gold',
   },
   currentIcon: {
     width: SCREEN_WIDTH,
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
   },
   currentTemp: {
-    fontSize: 70,
+    fontSize: 80,
     fontWeight: "600",
     //backgroundColor: 'yellow',
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   },
   currentDescription: {
     fontSize: 20,
-    fontWeight: "400",
+    fontWeight: "500",
     marginTop: -15,
   },
 
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   loading: {
     width: SCREEN_WIDTH,
     alignItems: "flex-start",
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
     //backgroundColor: 'yellow',
   },
 
