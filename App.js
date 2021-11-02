@@ -74,7 +74,7 @@ export default function App() {
           ) : (
             days.map((day, index) => 
               <View style={styles.weekBox}>
-                <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(0, 10)}</Text>
+                <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
                 <Fontisto name={icons[day.weather[0].main]} size={24} color="black"/>
                 <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(1)}°C</Text>
                 <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(1)}°C</Text>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginTop: 30,
-    backgroundColor: 'blue',
+    //backgroundColor: 'blue',
   },
   cityName: {
     fontSize: 30,
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   currentStatus: {
     flex: 4,
     marginVertical: 5,
-    backgroundColor: 'gold',
+    //backgroundColor: 'gold',
   },
   currentIcon: {
     width: SCREEN_WIDTH,
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     flexDirection: "row",
     marginVertical: 5,
+    paddingHorizontal: 10,
     //backgroundColor: "lightgreen",
   },
   date: {
