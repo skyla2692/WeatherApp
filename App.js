@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, ScrollView, ActivityIndicator } from 'react-native';
 import { Fontisto } from '@expo/vector-icons';
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const API_KEY = "c01eb371fe0059414ff56f2768963b7c";
 
 const icons = {
@@ -21,6 +21,7 @@ export default function App() {
   const [days, setDays] = useState([]);
   const [ok, setOk]= useState(true);
   const [currents, setCurrents] = useState([]);
+  const [hours, setHours] = useState([]);
 
   const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
@@ -31,12 +32,15 @@ export default function App() {
 
     const { coords : { latitude, longitude }} = await Location.getCurrentPositionAsync({ accuracy: 5 });
     const location = await Location.reverseGeocodeAsync({latitude, longitude}, {useGoogleMaps: false});
+
     setCity(location[0].city);
 
     const response = await fetch(`https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`);
     const json = await response.json();
+
     setDays(json.daily);
     setCurrents(json.current);
+    setHours(json.hourly);
   };
 
   useEffect(() => {
@@ -50,19 +54,33 @@ export default function App() {
       </View>
     
       <ScrollView 
-        pagingEnabled   /* makes the pages to the scrolls (not allowing pages to be freely scrolled) */
-        showsHorizontalScrollIndicator={true}   /* if false -> makes the scrolling bar in the bottom disappear */
-        indicatorStyle="white"    /* change the color of your scoll bar + only works in IOS */
+        /* pagingEnabled ->  makes the pages to scroll by pages (not allowing pages to be freely scrolled) */
+        showsHorizontalScrollIndicator={false}   /* makes the scrolling bar in the bottom disappear */
+        /* indicatorStyle="white"    change the color of your scoll bar + only works in IOS */
         contentContainerStyle={styles.weather}  /* way to apply style under ScrollView Tag */
-        >
+      >
         <View style={styles.currentStatus}>
           <View style={styles.currentIcon}>
             <Text style={styles.currentTemp}>{parseFloat(currents.temp).toFixed(1)}°C</Text>
             <View style={styles.currentDescBox}>
-              <Fontisto name={icons[currents.weather[0].main]} size={70} color="black" style={{marginTop: 10}}/>
+              <Fontisto name={icons[currents.weather[0].main]} size={70} color="black" style={{marginTop: 20}}/> 
               <Text style={styles.currentDescription}>{currents.weather[0].main}</Text>
             </View>
           </View>
+          <View style={styles.currMaxMin}>
+            <Text style={styles.currMM}>{parseFloat(days[0].temp.max).toFixed(1)}°C</Text>
+            <Text style={styles.currMM}>/</Text>
+            <Text style={styles.currMM}>{parseFloat(days[0].temp.min).toFixed(1)}°C</Text>
+          </View>
+
+          <ScrollView
+            indicatorStyle="white"
+            contentContainerStyle={styles.hourly}>
+            <View style={styles.everyHour}>
+              {/* <Fontisto name={icons[hours.weather[0].main]} size={30} color="black" style={{marginTop: 10}}/>
+              <Text style={styles.currentDescription}>{hours.weather[0].main}</Text> */} 
+            </View>
+          </ScrollView>
         </View>
 
         {days.length === 0 ? (
@@ -114,11 +132,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: "row",
     justifyContent: "space-between",
+    //backgroundColor: "cyan",
   },
   currentTemp: {
     fontSize: 80,
+    marginTop: -10,
     fontWeight: "600",
-    //backgroundColor: 'yellow',
   },
   currentDescBox: {
     alignItems: 'center',
@@ -126,9 +145,26 @@ const styles = StyleSheet.create({
   currentDescription: {
     fontSize: 20,
     fontWeight: "500",
-    marginTop: -15,
+  },
+  currMaxMin: {
+    flexDirection: "row",
+    width: "80%",
+    paddingHorizontal: 40,
+    alignItems: "center",
+    justifyContent: 'space-around',
+    marginTop: -20,
+    //backgroundColor: "darkviolet",
+  },
+  currMM: {
+    fontSize: 28,
+    fontWeight: '500',
   },
 
+  hourly: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "green",
+  },
 
   weather: {
     alignItems: "center",
@@ -139,6 +175,7 @@ const styles = StyleSheet.create({
 
   loading: {
     width: SCREEN_WIDTH,
+    height: "100%",
     alignItems: "flex-start",
     paddingHorizontal: 20,
     //backgroundColor: 'yellow',
@@ -151,7 +188,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical: 5,
     paddingHorizontal: 10,
-    //backgroundColor: "lightgreen",
+    borderBottomWidth: 1,
+    backgroundColor: "#d67272",
   },
   date: {
     fontSize: 24,
