@@ -6,7 +6,7 @@ import { Fontisto } from '@expo/vector-icons';
 const config = require('./config/key');
 const API_KEY = config.API_KEY;
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const icons = {
   "Clouds" : "cloudy",
