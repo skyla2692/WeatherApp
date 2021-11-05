@@ -68,9 +68,8 @@ export default function App() {
       </View>
     
       <ScrollView 
-        /* pagingEnabled ->  makes the pages to scroll by pages (not allowing pages to be freely scrolled) */
+        pagingEnabled /* makes the pages to scroll by pages (not allowing pages to be freely scrolled) */
         showsHorizontalScrollIndicator={false}   /* makes the scrolling bar in the bottom disappear */
-        /* indicatorStyle="white"    change the color of your scoll bar + only works in IOS */
         contentContainerStyle={styles.weather}  /* way to apply style under ScrollView Tag */
       >
         <View style={styles.today}>
