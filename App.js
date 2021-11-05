@@ -51,7 +51,10 @@ export default function App() {
 
     setDays(json.daily);
     setCurrents(json.current);
-    setHours(json.hourly);
+    
+    const hour = json.hourly;
+    hour.splice(12);
+    setHours(hour);
   };
 
   useEffect(() => {
@@ -75,22 +78,23 @@ export default function App() {
             <View style={styles.currentIcon}>
               <Text style={styles.currentTemp}>{parseFloat(currents.temp).toFixed(1)}°C</Text>
               <View style={styles.currentDescBox}>
-                <Fontisto name={icons[currents.weather[0].main]} size={56} color="black" style={{marginTop: 20}}/> 
-                <Text style={styles.currentDescription}>{currents.weather[0].main}</Text>
+                {/* <Fontisto name={icons[currents.weather[0].main]} size={56} color="black" style={{marginTop: 20}}/> 
+                <Text style={styles.currentDescription}>{currents.weather[0].main}</Text> */}
               </View>
             </View>
             <View style={styles.currMaxMin}>
-              <Text style={styles.currMM}>{parseFloat(days[0].temp.max).toFixed(0)}°C</Text>
+              {/* <Text style={styles.currMM}>{parseFloat(days[0].temp.max).toFixed(0)}°C</Text>
               <Text style={styles.currMM}>/</Text>
-              <Text style={styles.currMM}>{parseFloat(days[0].temp.min).toFixed(0)}°C</Text>
+              <Text style={styles.currMM}>{parseFloat(days[0].temp.min).toFixed(0)}°C</Text> */}
             </View>
           </View>
+          
           <ScrollView
             horizontal
             scrollEnabled
             indicatorStyle="white"
             contentContainerStyle={styles.hourly}>
-            {hours.map((hour, index) =>
+            {hours.map((hour) =>
               <View style={styles.everyHour}>
                 <Text style={styles.hourlyhour}>{new Date(hour.dt*1000).getHours()}시</Text>
                 <Fontisto name={icons[hour.weather[0].main]} size={30} color="black" style={{marginTop: 10}}/>
@@ -100,6 +104,8 @@ export default function App() {
           </ScrollView>
         </View>
 
+        {delete days[0]}
+
         {days.length === 0 ? (
           <View style={{ ...styles.loading, alignItems: "center" }}>
             <ActivityIndicator 
@@ -107,7 +113,7 @@ export default function App() {
               size="large" />
           </View>
           ) : (
-          days.map((day, index) => 
+          days.map((day) => 
             <View style={styles.weekBox}>
               <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
               <Fontisto name={icons[day.weather[0].main]} size={25} color="black"/>
