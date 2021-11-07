@@ -23,4 +23,5 @@
 - Can background be changed with image without impacting any of UI?
 
 ### 2021. 11. 07.
-- 
+- Found the data problem was because I tried to use .map() function on non-array component, which was an object.
+- Try to figure out a way to delete day[0] from weeklh list without impacting other data.

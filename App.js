@@ -109,7 +109,7 @@ export default function App() {
                 )}
               </ScrollView>
             </View>
-
+            
             {days.map((day, index) => 
               <View key={index} style={styles.weekBox}>
                 <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
