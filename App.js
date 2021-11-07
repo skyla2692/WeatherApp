@@ -3,7 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text, View, ScrollView, ActivityIndicator } from 'react-native';
 import { Fontisto } from '@expo/vector-icons';
 
-const API_KEY = "c01eb371fe0059414ff56f2768963b7c";
+const config = require('./config/key');
+const API_KEY = config.API_KEY;
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -49,8 +50,11 @@ export default function App() {
     const json = await response.json();
 
     setDays(json.daily);
-    setCurrents(json.current);
     
+    const currentArr = [];
+    currentArr.push(json.current);
+    setCurrents(currentArr);
+
     const hour = json.hourly;
     hour.splice(12);
     setHours(hour);
@@ -66,60 +70,56 @@ export default function App() {
         <Text style={styles.cityName}>{city}</Text>
       </View>
     
-      <ScrollView 
-        pagingEnabled /* makes the pages to scroll by pages (not allowing pages to be freely scrolled) */
-        showsHorizontalScrollIndicator={false}   /* makes the scrolling bar in the bottom disappear */
-        contentContainerStyle={styles.weather}  /* way to apply style under ScrollView Tag */
-      >
-        <View style={styles.today}>
-          <View style={styles.currentStatus}>
-            <View style={styles.currentIcon}>
-              <Text style={styles.currentTemp}>{parseFloat(currents.temp).toFixed(1)}°C</Text>
-              <View style={styles.currentDescBox}>
-                {/* <Fontisto name={icons[currents.weather[0].main]} size={56} color="black" style={{marginTop: 20}}/> 
-                <Text style={styles.currentDescription}>{currents.weather[0].main}</Text> */}
-              </View>
-            </View>
-            <View style={styles.currMaxMin}>
-              {/* <Text style={styles.currMM}>{parseFloat(days[0].temp.max).toFixed(0)}°C</Text>
-              <Text style={styles.currMM}>/</Text>
-              <Text style={styles.currMM}>{parseFloat(days[0].temp.min).toFixed(0)}°C</Text> */}
-            </View>
-          </View>
-          
-          <ScrollView
-            horizontal
-            scrollEnabled
-            indicatorStyle="white"
-            contentContainerStyle={styles.hourly}>
-            {hours.map((hour) =>
-              <View key={hour.index} style={styles.everyHour}>
-                <Text style={styles.hourlyhour}>{new Date(hour.dt*1000).getHours()}시</Text>
-                <Fontisto name={icons[hour.weather[0].main]} size={30} color="black" style={{marginTop: 10}}/>
-                <Text style={styles.hourlyTemp}>{parseFloat(hour.temp).toFixed(1)}</Text>
-              </View>
-            )}
-          </ScrollView>
-        </View>
-
-        {delete days[0]}
-
+      <ScrollView pagingEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.weather}>
         {days.length === 0 ? (
           <View style={{ ...styles.loading, alignItems: "center" }}>
-            <ActivityIndicator 
-              color="white" 
-              size="large" />
+            <ActivityIndicator color="white" size="large" />
           </View>
           ) : (
-          days.map((day) => 
-            <View key={day.index} style={styles.weekBox}>
-              <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
-              <Fontisto name={icons[day.weather[0].main]} size={25} color="black"/>
-              <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(0)}°C</Text>
-              <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(0)}°C</Text>
+          <View>
+            <View style={styles.today}>
+              <View style={styles.currentStatus}>
+                {currents.map((current, index) => 
+                  <View key={index} style={styles.currentIcon}>
+                    <Text style={styles.currentTemp}>{parseFloat(current.temp).toFixed(1)}°C</Text>
+                    <View style={styles.currentDescBox}>
+                      <Fontisto name={icons[current.weather[0].main]} size={56} color="black" style={{marginTop: 20}}/> 
+                      <Text style={styles.currentDescription}>{current.weather[0].main}</Text>
+                    </View>
+                  </View>
+                )}
+                <View style={styles.currMaxMin}>
+                  <Text style={styles.currMM}>{parseFloat(days[0].temp.max).toFixed(0)}°C</Text>
+                  <Text style={styles.currMM}>/</Text>
+                  <Text style={styles.currMM}>{parseFloat(days[0].temp.min).toFixed(0)}°C</Text>
+                </View>
+              </View>
+              
+              <ScrollView
+                horizontal
+                scrollEnabled
+                indicatorStyle="white"
+                contentContainerStyle={styles.hourly}>
+                {hours.map((hour, index) =>
+                  <View key={index} style={styles.everyHour}>
+                    <Text style={styles.hourlyhour}>{new Date(hour.dt*1000).getHours()}시</Text>
+                    <Fontisto name={icons[hour.weather[0].main]} size={30} color="black" style={{marginTop: 10}}/>
+                    <Text style={styles.hourlyTemp}>{parseFloat(hour.temp).toFixed(1)}</Text>
+                  </View>
+                )}
+              </ScrollView>
             </View>
-            )
-          )}
+
+            {days.map((day, index) => 
+              <View key={index} style={styles.weekBox}>
+                <Text style={styles.date}>{new Date(day.dt*1000).toString().substring(4, 10)}</Text>
+                <Fontisto name={icons[day.weather[0].main]} size={25} color="black"/>
+                <Text style={styles.temp}>{parseFloat(day.temp.max).toFixed(0)}°C</Text>
+                <Text style={styles.temp}>{parseFloat(day.temp.min).toFixed(0)}°C</Text>
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
     </View>
   );
