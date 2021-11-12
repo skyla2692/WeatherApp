@@ -6,7 +6,7 @@ Following basic instructions from the [lecture](http://nomadcoders.co/react-nati
 This weather forcast application will be later combined with a to-do application. <br>
 
 ## Relative Documents
-[React_Native](http://reactnative.dev/docs) <br>
+[React_Native](https://reactnative.dev/) <br>
 [JavaScript](http://developer.mozilla.org/docs/Web/JavaScript/Reference) <br>
 [WeatherAPI](http://openweathermap/org/api) <br>
 [Expo](http://expo.dev)
